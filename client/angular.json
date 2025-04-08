@@ -27,8 +27,9 @@
             "styles": [
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "./node_modules/font-awesome/css/font-awesome.min.css",
-              "./node_modules/bootswatch/dist/cyborg/bootstrap.min.css",
-              "node_modules/ngx-toastr/toastr.css",
+              "./node_modules/bootswatch/dist/United/bootstrap.min.css",
+              "./node_modules/ngx-spinner/animations/fire.css",
+              "./node_modules/ngx-toastr/toastr.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -66,8 +67,8 @@
         "serve": {
           "options": {
             "ssl": true,
-            "sslCert": "./ssl/example.com+5.pem",
-            "sslKey": "./ssl/example.com+5-key.pem"
+            "sslCert": "./ssl/example.com+4.pem",
+            "sslKey": "./ssl/example.com+4-key.pem"
           },
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {

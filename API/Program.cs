@@ -1,34 +1,52 @@
-
-using API.Data;
-using API.Extensions;
-using API.Middlewares;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using API.Data;
 
-var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
-builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.AddIdentityServices(builder.Configuration);
-
-var app = builder.Build();
-// Configure the HTTP request pipeline.
-app.UseMiddleware<ExceptionMiddleware>();
-app.UseCors((cors) => cors.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200","https://localhost:4200"));
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-try
+namespace API
 {
-    var context = services.GetRequiredService<DataContext>();
-    await context.Database.MigrateAsync();
-    await Seed.SeedUsersAsync(context);
-}
-catch (Exception ex)
-{
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error ocurred during migration/seeding.");
-}
+    public class Program
+    {
+        
+        public static async Task Main(string[] args)
+        {
+            var host = CreateHostBuilder(args).Build();
 
-app.Run();
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                try
+                {
+                    // Obtiene el contexto de datos
+                    var context = services.GetRequiredService<DataContext>();
+
+                    // Aplica las migraciones pendientes para asegurar la sincronización de la base de datos
+                    await context.Database.MigrateAsync();
+
+                    // Llama a la función de seeding
+                    await Seed.SeedUsersAsync(context);
+                }
+                catch (Exception ex)
+                {
+                    // Maneja y registra cualquier excepción ocurrida en el proceso de seeding
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "Ocurrió un error durante el seeding de la base de datos.");
+                }
+            }
+
+            // Ejecuta la aplicación
+            await host.RunAsync();
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
+}

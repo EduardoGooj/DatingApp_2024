@@ -4,13 +4,14 @@ import { map, Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { environment } from '../../environments/environment';
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
-  private http = inject(HttpClient);
+  private  http = inject (HttpClient);
   baseUrl = environment.apiUrl;
-  currentUser = signal<User | null>(null);
+  currentUser = signal <User | null>(null);
 
   login(model: any): Observable<User | void> {
     return this.http.post<User>(this.baseUrl + "account/login", model).pipe(

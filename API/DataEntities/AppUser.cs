@@ -20,5 +20,7 @@ public class AppUser
     public required string Country { get; set; }
     public List<Photo> Photos { get; set; } = [];
 
+    // public static implicit operator AppUser(AppUser v) => throw new NotImplementedException();
+
     // public int GetAge() => BirthDay.CalculateAge();
 }

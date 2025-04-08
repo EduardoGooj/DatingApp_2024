@@ -1,12 +1,11 @@
 namespace API.Controllers;
 using System.Security.Cryptography;
 using System.Text;
-using API.Data;
-using API.DTOs;
-using API.DataEntities;
-using API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using global::API.Data;
+using global::API.Services;
+using global::API.DTOs;
 
 public class AccountController(
     DataContext context,
