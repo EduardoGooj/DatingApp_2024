@@ -14,12 +14,14 @@ public class PresenceHub(PresenceTracker presenceTracker) : Hub
             throw new HubException("Cannot get the current user claim");
         }
 
-        await presenceTracker.UserConnected(Context.User.GetUserName(), Context.ConnectionId);
-        await Clients.Others.SendAsync("UserIsOnline", Context.User?.GetUserName());
+        var isOnline = await presenceTracker.UserConnected(Context.User.GetUserName(), Context.ConnectionId);
+        if (isOnline)
+        {
+            await Clients.Others.SendAsync("UserIsOnline", Context.User?.GetUserName());
+        }
 
         var onlineUsers = await presenceTracker.GetOnlineUsers();
-        await Clients.All.SendAsync("GetOnlineUsers", onlineUsers);
-        await GetOnlineUsers();
+        await Clients.Caller.SendAsync("GetOnlineUsers", onlineUsers);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -29,17 +31,12 @@ public class PresenceHub(PresenceTracker presenceTracker) : Hub
             throw new HubException("Cannot get the current user claim");
         }
 
-        await presenceTracker.UserDisconnected(Context.User.GetUserName(), Context.ConnectionId);
-        await Clients.Others.SendAsync("UserIsOffline", Context.User?.GetUserName());
-
-        await GetOnlineUsers();
+        var isOffline = await presenceTracker.UserDisconnected(Context.User.GetUserName(), Context.ConnectionId);
+        if (isOffline)
+        {
+            await Clients.Others.SendAsync("UserIsOffline", Context.User?.GetUserName());
+        }
 
         await base.OnDisconnectedAsync(exception);
-    }
-
-    private async Task GetOnlineUsers()
-    {
-        var onlineUsers = await presenceTracker.GetOnlineUsers();
-        await Clients.All.SendAsync("GetOnlineUsers", onlineUsers);
     }
 }
