@@ -4,7 +4,7 @@
             <p>Start chating, no messages yet!</p>
         } @else {
             <ul class="chat">
-               @for (message of messagesService.messageThread(); track message.id) {
+                @for (message of messagesService.messageThread(); track message.id) {
                     <li>
                         <div>
                             <span class="chat-img float-end">
@@ -51,7 +51,3 @@
         </form>
     </div>
 </div>
-
-
-
-
